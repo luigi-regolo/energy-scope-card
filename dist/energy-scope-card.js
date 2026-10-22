@@ -187,10 +187,10 @@
     :host{display:block;min-width:0;font-family:var(--ha-font-family-body,-apple-system,BlinkMacSystemFont,system-ui,Roboto,sans-serif);font-size:14px;color:var(--es-text)}
     *{box-sizing:border-box}
     :host([data-theme=light]){--es-bg:#FFFFFF;--es-panel:#F1F3EF;--es-text:#19221E;--es-muted:#68716C;--es-line:#E3E7E2;--es-other:#B1C5B8;--es-weak:#789A8A;--es-red:#B85D55}
-    :host([data-theme=dark]){--es-bg:#202221;--es-panel:#191B1A;--es-text:#F7F5F0;--es-muted:#C6CAC7;--es-line:#343735;--es-other:#657D71;--es-weak:#88A99A;--es-red:#D27369}
-    :host{--es-accent:var(--edera-emerald-color,${GREEN})}
-    .es-container{container-type:inline-size;min-width:0;max-width:100%}
-    .es-shell{padding:21px;border:1px solid var(--es-line);background:var(--es-bg);border-radius:26px;min-width:0;overflow:hidden}
+    :host([data-theme=dark]){--es-bg:#101211;--es-panel:#191c1a;--es-text:#f5f7f4;--es-muted:#bbc5bd;--es-line:#2b302c;--es-other:#657D71;--es-weak:#88A99A;--es-red:#D27369}
+    :host{--es-accent:var(--edera-emerald-color,${GREEN});overflow-anchor:none}
+    .es-container{container-type:inline-size;min-width:0;max-width:100%;overflow-anchor:none}
+    .es-shell{padding:21px;border:1px solid var(--es-line);background:var(--es-bg);border-radius:26px;min-width:0;overflow:hidden;overflow-anchor:none}
     .es-header{min-width:0;margin:2px 4px 17px}
     .es-eyebrow{font-size:10px;letter-spacing:1.7px;font-weight:750;line-height:1.1;color:var(--es-muted);text-transform:uppercase;margin:0 0 7px}
     .es-title{font-size:25px;line-height:1.14;font-weight:780;letter-spacing:-.7px;margin:0;overflow-wrap:anywhere}
@@ -207,44 +207,48 @@
     .es-varval{font-size:16px;font-weight:740;color:var(--es-weak);margin-top:7px}
     .es-varval.bad{color:var(--es-red)}
     .es-varnote{font-size:11px;color:var(--es-muted);margin-top:4px}
-    .es-subgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
-    .es-stat{padding:12px 13px;min-width:0;background:var(--es-panel);border:1px solid var(--es-line);border-radius:17px}
-    .es-stat-label{font-size:11px;color:var(--es-muted);line-height:1.4}
-    .es-stat-val{font-size:22px;line-height:1.3;font-weight:750;font-variant-numeric:tabular-nums;margin-top:7px;overflow-wrap:anywhere}
+    .es-subgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px;align-items:stretch}
+    .es-stat{padding:12px 13px;min-width:0;background:var(--es-panel);border:1px solid var(--es-line);border-radius:17px;display:grid;grid-template-rows:minmax(34px,auto) auto;align-content:start}
+    .es-stat-label{font-size:11px;color:var(--es-muted);line-height:1.4;align-self:start;min-height:34px}
+    .es-stat-val{font-size:22px;line-height:1.3;font-weight:750;font-variant-numeric:tabular-nums;margin:0;overflow-wrap:anywhere;display:flex;align-items:baseline;gap:4px;min-width:0}
     .es-stat-unit{font-size:11px;font-weight:500;color:var(--es-muted)}
     .es-note{font-size:11px;line-height:1.5;color:var(--es-muted);margin-top:10px}
-    .es-charthead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:20px}
-    .es-charttitle{font-size:15px;font-weight:720}
+    .es-charthead{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:20px}
     .es-tabs{display:flex;gap:4px;padding:4px;border:1px solid var(--es-line);border-radius:12px;background:var(--es-panel)}
     .es-tab{font-size:12px;font-weight:650;cursor:pointer;border:0;border-radius:9px;background:transparent;color:var(--es-muted);padding:7px 12px}
     .es-tab[aria-pressed=true]{color:var(--es-text);background:var(--es-bg);box-shadow:0 0 0 1px var(--es-line)}
+    :host([data-theme=dark]) .es-tabs{background:var(--es-bg)}
+    :host([data-theme=dark]) .es-tab[aria-pressed=true]{background:var(--es-panel)}
+    .es-graph-region{min-height:236px;overflow-anchor:none}
     .es-plot{height:156px;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:3px;align-items:stretch;margin-top:17px;border-bottom:1px solid var(--es-line);background:linear-gradient(to top,transparent 24.6%,var(--es-line) 25%,transparent 25.4%,transparent 49.6%,var(--es-line) 50%,transparent 50.4%,transparent 74.6%,var(--es-line) 75%,transparent 75.4%)}
     .es-barcell{height:100%;display:flex;align-items:end;justify-content:center;gap:2px;min-width:0}
     .es-bar{min-width:2px;max-width:24px;width:43%;background:var(--es-accent);border-radius:4px 4px 0 0}
     .es-bar.other{background:var(--es-other)}
     .es-axis{font-size:10px;color:var(--es-muted);display:flex;justify-content:space-between;gap:5px;margin-top:9px}
-    .es-legend{display:flex;gap:15px;flex-wrap:wrap;color:var(--es-muted);font-size:11px;margin-top:13px}
+    .es-legend{display:flex;gap:15px;flex-wrap:wrap;color:var(--es-muted);font-size:11px;margin-top:13px;min-height:18px}
     .es-dot{display:inline-block;width:9px;height:9px;border-radius:3px;background:var(--es-accent);margin-right:6px;vertical-align:middle}
     .es-dot.other{background:var(--es-other)}
-    .es-chart-empty{margin-top:15px;padding:24px 12px;border:1px dashed var(--es-line);border-radius:14px;color:var(--es-muted);font-size:12px;text-align:center;min-height:156px;display:flex;align-items:center;justify-content:center}
+    .es-chart-empty{margin-top:15px;padding:24px 12px;border:1px dashed var(--es-line);border-radius:14px;color:var(--es-muted);font-size:12px;text-align:center;min-height:190px;display:flex;align-items:center;justify-content:center}
     .es-details{display:flex;align-items:center;justify-content:space-between;width:100%;min-width:0;gap:12px;min-height:42px;padding:10px 14px;margin-top:14px;border:1px solid var(--es-accent);border-radius:16px;background:var(--es-accent);color:#fff;text-align:left;font-weight:650;font-size:12px;cursor:pointer}
     .es-details[aria-expanded=true],.es-details:hover{background:var(--es-accent);color:#fff}
     .es-details-label{display:inline-flex;align-items:center;gap:8px}.es-details ha-icon{--mdc-icon-size:17px;width:17px;height:17px}
     .es-empty{padding:20px 4px;color:var(--es-muted);line-height:1.6;font-size:13px}
-    .es-backdrop{position:fixed;inset:0;z-index:9999;background:#0009;display:grid;place-items:center;overflow:hidden;overscroll-behavior:none;touch-action:none;padding:max(20px,env(safe-area-inset-top)) 18px max(20px,env(safe-area-inset-bottom))}
-    .es-dialog{display:flex;flex-direction:column;background:var(--es-bg);color:var(--es-text);border:1px solid var(--es-line);border-radius:26px;width:min(390px,100%);max-height:min(82vh,720px);max-height:min(82dvh,720px);box-shadow:0 18px 60px #0005;overflow:hidden;min-width:0}
+    .es-backdrop{position:fixed;inset:0;z-index:9999;background:#0009;display:grid;place-items:center;overflow:hidden;overscroll-behavior:none;padding:max(20px,env(safe-area-inset-top)) 18px max(20px,env(safe-area-inset-bottom))}
+    .es-dialog{display:flex;flex-direction:column;background:var(--es-bg);color:var(--es-text);border:1px solid var(--es-line);border-radius:26px;width:min(390px,100%);max-height:min(82vh,720px);max-height:min(82dvh,720px);box-shadow:0 18px 60px #0005;overflow:hidden;overscroll-behavior:contain;min-width:0}
     .es-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:62px;padding:18px 19px 12px;flex:none;background:var(--es-bg)}
     .es-dialog-head-title{font-size:17px;font-weight:600;line-height:1.3}.es-dialog-sub{font-size:12px;color:var(--es-muted);margin-top:4px}
     .es-close{display:flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:var(--es-panel);color:var(--es-text);width:36px;height:36px;flex:none;line-height:0;padding:0;cursor:pointer}
     .es-close ha-icon{display:block;width:18px;height:18px;--mdc-icon-size:18px;flex:none}
     .es-dialog-scroll{min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding:8px 19px 19px}
     .es-popup-label{font-size:13px;font-weight:700;margin:4px 0 10px}
-    .es-popup-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--es-line);font-size:12px}
-    .es-popup-row span{color:var(--es-muted)}.es-popup-row strong{font-variant-numeric:tabular-nums;text-align:right}
+    .es-popup-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:10px 0;border:0;font-size:12px;line-height:1.5}
+    .es-popup-row span{color:var(--es-muted);min-width:0;flex:1}.es-popup-row strong{font-variant-numeric:tabular-nums;text-align:right;max-width:48%;overflow-wrap:anywhere}
     .es-popup-panel{border:1px solid var(--es-line);background:var(--es-panel);border-radius:16px;padding:13px;margin:9px 0 15px}
     .es-popup-big{font-size:24px;font-weight:750;font-variant-numeric:tabular-nums;margin-top:6px}
+    .es-popup-section{margin-top:25px}
+    .es-popup-section .es-popup-label{font-size:14px;font-weight:700;margin-bottom:13px}
     button:focus-visible{outline:2px solid var(--es-accent);outline-offset:2px}
-    @container (max-width:395px){.es-shell{padding:15px;border-radius:24px}.es-title{font-size:23px}.es-total{font-size:34px}.es-stat-val{font-size:20px}.es-plot{height:138px}.es-chart-empty{min-height:138px}.es-summary{padding:15px}.es-hero{gap:9px}}
+    @container (max-width:395px){.es-shell{padding:15px;border-radius:24px}.es-title{font-size:23px}.es-total{font-size:34px}.es-stat-val{font-size:20px}.es-plot{height:138px}.es-chart-empty{min-height:173px}.es-graph-region{min-height:214px}.es-summary{padding:15px}.es-hero{gap:9px}}
     @container (max-width:325px){.es-total{font-size:30px}.es-unit{font-size:12px}.es-hero{grid-template-columns:minmax(0,1fr) minmax(82px,max-content)}.es-variation .es-hero-label{font-size:10px}.es-stat{padding:10px}.es-stat-val{font-size:18px}}
     @media(max-width:599px){.es-dialog{width:min(350px,100%);max-height:min(68vh,560px);max-height:min(68dvh,560px);border-radius:24px}.es-backdrop{padding:max(20px,env(safe-area-inset-top)) 18px max(20px,env(safe-area-inset-bottom))}}
     @media(max-height:480px){.es-dialog{max-height:calc(100dvh - 24px)}}
@@ -338,18 +342,19 @@
       return `<div class="es-backdrop" data-backdrop="true"><div class="es-dialog" role="dialog" aria-modal="true" aria-label="Dettagli energetici">
           <div class="es-dialog-head"><div><div class="es-dialog-head-title">Dettagli energetici</div><div class="es-dialog-sub">${esc(source.name)}</div></div>
           <button class="es-close" type="button" data-close="true" aria-label="Chiudi">${icon('mdi:close')}</button></div>
-          <div class="es-dialog-scroll"><div class="es-popup-label">Riepilogo consumi</div>
-          <div class="es-popup-panel"><div class="es-hero-label">Mese in corso</div><div class="es-popup-big">${fmt(view.month, this._cfg.decimals)} <span class="es-unit">kWh</span></div></div>
+          <div class="es-dialog-scroll"><div class="es-popup-section" style="margin-top:0"><div class="es-popup-label">Riepilogo consumi</div>
+          <div class="es-popup-panel"><div class="es-hero-label">Mese in corso</div><div class="es-popup-big">${fmt(view.month, this._cfg.decimals)} <span class="es-unit">kWh</span></div></div></div>
+          <div class="es-popup-section"><div class="es-popup-label">Confronto mensile</div>
           ${line('Mese precedente', `${fmt(view.prior, this._cfg.decimals)} kWh`)}
           ${line(`Mese corrente: primi ${view.comparedDays} giorni conclusi`, `${fmt(view.actualComparable, this._cfg.decimals)} kWh`)}
           ${line(`Mese precedente: primi ${view.comparedDays} giorni`, `${fmt(view.priorComparable, this._cfg.decimals)} kWh`)}
           ${line('Variazione periodi equivalenti', view.comparison === null ? 'N/D' : `${view.comparison > 0 ? '+' : ''}${fmt(view.comparison, 1)}%`)}
-          <div class="es-popup-label" style="margin-top:19px">Statistiche annuali</div>
+          </div><div class="es-popup-section"><div class="es-popup-label">Statistiche annuali</div>
           ${line(`Totale ${view.now.year}${yearNote}`, view.yearComplete ? `${fmt(view.yearlyValue, this._cfg.decimals)} kWh` : 'Dati insufficienti')}
           ${line(`Storico ${view.now.year}`, `${view.monthsPresent} mesi disponibili su ${view.now.month}`)}
           ${line(`Confronto con il ${view.now.year - 1}`, view.yearComparison === null ? 'Dati insufficienti' : `${view.yearComparison > 0 ? '+' : ''}${fmt(view.yearComparison, 1)}%`)}
           ${view.error ? `<div class="es-note" role="alert">${esc(view.error)}</div>` : ''}
-          </div></div></div>`;
+          </div></div></div></div>`;
     }
     _lock(enable) {
       if (enable === this._modalLock) return;
@@ -398,7 +403,10 @@
       const powerValue = source.power ? watt(this._hass?.states?.[source.power]) : null;
       const hasHouse = !!this._cfg.house_energy_entity;
       const sig = JSON.stringify({ cfg: this._cfg, source: this._source, chart: this._chart, dialog: this._dialog, theme: this._theme(),
-        current: entity?.state, last: entity?.attributes?.last_period, available: entity?.attributes?.state_class, powerValue,
+        current: valid ? fmt(view.month, this._cfg.decimals) : entity?.state,
+        last: valid ? fmt(view.prior, this._cfg.decimals) : entity?.attributes?.last_period,
+        available: entity?.attributes?.state_class, powerValue: powerValue === null ? null : fmt(powerValue, 0),
+        date: `${view.now.year}-${view.now.month}-${view.now.day}`,
         fetch: record?.fetchedAt, fetching: record?.loading, error: record?.error, exists: !!entity });
       if (sig === this._signature) return;
       this._signature = sig;
@@ -427,10 +435,10 @@
            ${powerValue !== null ? `<div class="es-note">Potenza attuale: <strong>${fmt(powerValue, 0)} W</strong></div>` : ''}</div>
            <div class="es-subgrid"><div class="es-stat"><div class="es-stat-label">${esc(priorTitle)} · mese concluso</div><div class="es-stat-val">${fmt(view.prior, this._cfg.decimals)} <span class="es-stat-unit">kWh</span></div></div>
            <div class="es-stat"><div class="es-stat-label">${meta.year} · ${view.yearComplete ? 'totale progressivo' : 'storico disponibile'}</div><div class="es-stat-val">${fmt(view.yearlyValue, this._cfg.decimals)} <span class="es-stat-unit">kWh</span></div></div></div>
-           ${(canMonth || canYear) ? `<div class="es-charthead"><div class="es-charttitle">Andamento dei consumi</div><div class="es-tabs">
+           ${(canMonth || canYear) ? `<div class="es-charthead"><div class="es-tabs" role="group" aria-label="Periodo del grafico">
              ${canMonth ? `<button class="es-tab" type="button" data-chart="month" aria-pressed="${this._chart === 'month'}">Mese</button>` : ''}
              ${canYear ? `<button class="es-tab" type="button" data-chart="year" aria-pressed="${this._chart === 'year'}">Anno</button>` : ''}</div></div>
-             ${this._chartFor(view)}<div class="es-note">${this._chart === 'month' ? 'Consumi giornalieri; il giorno attuale può essere parziale.' : 'Consumi mensili; il mese corrente è progressivo.'}</div>` : ''}
+             <div class="es-graph-region">${this._chartFor(view)}</div><div class="es-note">${this._chart === 'month' ? 'Consumi giornalieri; il giorno attuale può essere parziale.' : 'Consumi mensili; il mese corrente è progressivo.'}</div>` : ''}
            ${view.error ? `<div class="es-note" role="alert">${esc(view.error)}</div>` : ''}
            ${this._cfg.show_details ? `<button type="button" class="es-details" data-details="true" aria-haspopup="dialog" aria-expanded="${this._dialog}"><span class="es-details-label">${icon('mdi:chart-line')} Dettagli e statistiche</span>${icon('mdi:chevron-right')}</button>` : ''}`;
       }
