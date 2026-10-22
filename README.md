@@ -17,7 +17,7 @@ Energy Scope Card uses Home Assistant entities and available local Recorder stat
 
 ## Preview
 
-<!-- Preview image will be added after testing. -->
+![Energy Scope Card Preview — Graphite Dark](assets/preview-main.png)
 
 ## Features
 
@@ -43,11 +43,13 @@ Energy sources remain separate to avoid double counting. Missing historical valu
 
 [![Open Energy Scope Card in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=luigi-regolo&repository=energy-scope-card&category=plugin)
 
-1. Open **Energy Scope Card** in HACS using the link above.
-2. Follow the available prompts and download the card through HACS.
-3. Reload the Home Assistant dashboard if necessary.
-4. Add **Energy Scope Card** to your dashboard.
-5. Configure the card using the visual editor.
+1. Open HACS in Home Assistant.
+2. Open the three-dot menu and select **Custom repositories**.
+3. Enter `https://github.com/luigi-regolo/energy-scope-card`.
+4. Select **Dashboard** as the repository type and add it.
+5. Open **Energy Scope Card** in HACS and select **Download**.
+6. Reload the Home Assistant dashboard if necessary.
+7. Add **Energy Scope Card** to your dashboard and configure it through the visual editor.
 
 ## Configuration / Usage
 
