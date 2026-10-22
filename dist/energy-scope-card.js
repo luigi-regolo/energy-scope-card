@@ -200,12 +200,14 @@
     .es-source-tab[aria-pressed=true]{background:var(--es-accent);border-color:var(--es-accent);color:#fff}
     .es-summary{border:1px solid var(--es-line);border-radius:24px;background:var(--es-panel);padding:19px;margin-top:0;min-width:0}
     .es-hero-label{font-size:11px;color:var(--es-muted);font-weight:620}
-    .es-hero{display:flex;flex-direction:column;gap:16px;min-width:0}.es-hero>div{min-width:0}
-    .es-hero-main{width:100%}
-    .es-comparison{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-width:0}
-    .es-comparison-text{min-width:0;flex:1}
-    .es-comparison-title{font-size:12px;font-weight:650;line-height:1.45;color:var(--es-text)}
-    .es-comparison-sub{font-size:11px;line-height:1.4;color:var(--es-muted);margin-top:2px}
+    .es-hero{display:flex;flex-direction:column;gap:10px;min-width:0}
+    .es-hero-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;min-width:0}
+    .es-hero-head .es-hero-label{min-width:0;flex:1}
+    .es-comparison-context{font-size:10px;font-weight:580;line-height:1.4;color:var(--es-muted);text-align:right;flex:none;max-width:47%}
+    .es-comparison-context .es-context-short,.es-comparison-context .es-context-tiny{display:none}
+    .es-hero-values{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+    .es-hero-values .es-total{min-width:0}
+    .es-hero-values .es-comparison-pill{margin-left:auto}
     .es-comparison-pill{display:inline-flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;min-width:0;flex:none;border-radius:999px;padding:8px 11px;font-size:14px;line-height:1.2;font-weight:750;font-variant-numeric:tabular-nums}
     .es-comparison-pill ha-icon{--mdc-icon-size:16px;width:16px;height:16px;display:block;flex:none}
     .es-comparison-pill.bad{background:#382725;color:#e48a80}
@@ -214,7 +216,7 @@
     :host([data-theme=light]) .es-comparison-pill.bad{background:#fcebe9;color:#b85d55}
     :host([data-theme=light]) .es-comparison-pill.good{background:#e2f0e7;color:#0E6B52}
     :host([data-theme=light]) .es-comparison-pill.na{background:#e8ede9;color:#68716C}
-    .es-total{font-size:38px;font-weight:780;line-height:1.16;letter-spacing:-1.2px;font-variant-numeric:tabular-nums;margin-top:9px;overflow-wrap:anywhere}
+    .es-total{font-size:38px;font-weight:780;line-height:1.16;letter-spacing:-1.2px;font-variant-numeric:tabular-nums;margin:0;overflow-wrap:anywhere}
     .es-unit{font-size:14px;font-weight:600;color:var(--es-muted);letter-spacing:0}
     .es-subgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px;align-items:stretch}
     .es-stat{padding:12px 13px;min-width:0;background:var(--es-panel);border:1px solid var(--es-line);border-radius:17px;display:grid;grid-template-rows:minmax(34px,auto) auto;align-content:start}
@@ -257,8 +259,8 @@
     .es-popup-section{margin-top:25px}
     .es-popup-section .es-popup-label{font-size:14px;font-weight:700;margin-bottom:13px}
     button:focus-visible{outline:2px solid var(--es-accent);outline-offset:2px}
-    @container (max-width:395px){.es-shell{padding:15px;border-radius:24px}.es-title{font-size:23px}.es-total{font-size:34px}.es-stat-val{font-size:20px}.es-plot{height:138px}.es-chart-empty{min-height:173px}.es-graph-region{min-height:214px}.es-summary{padding:15px}.es-hero{gap:16px}}
-    @container (max-width:325px){.es-total{font-size:30px}.es-unit{font-size:12px}.es-comparison-pill{font-size:12px;padding:7px 9px}.es-comparison-title{font-size:11px}.es-stat{padding:10px}.es-stat-val{font-size:18px}}
+    @container (max-width:395px){.es-shell{padding:15px;border-radius:24px}.es-title{font-size:23px}.es-total{font-size:34px}.es-stat-val{font-size:20px}.es-plot{height:138px}.es-chart-empty{min-height:173px}.es-graph-region{min-height:214px}.es-summary{padding:15px}.es-hero{gap:10px}.es-comparison-context .es-context-long{display:none}.es-comparison-context .es-context-short{display:inline}}
+    @container (max-width:325px){.es-total{font-size:30px}.es-unit{font-size:12px}.es-comparison-pill{font-size:12px;padding:7px 9px}.es-stat{padding:10px}.es-stat-val{font-size:18px}.es-comparison-context .es-context-short{display:none}.es-comparison-context .es-context-tiny{display:inline}}
     @media(max-width:599px){.es-dialog{width:min(350px,100%);max-height:min(68vh,560px);max-height:min(68dvh,560px);border-radius:24px}.es-backdrop{padding:max(20px,env(safe-area-inset-top)) 18px max(20px,env(safe-area-inset-bottom))}}
     @media(max-height:480px){.es-dialog{max-height:calc(100dvh - 24px)}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
@@ -445,10 +447,15 @@
       } else {
         const direction = compare === null ? 'na' : compare > 0 ? 'bad' : 'good';
         const trendIcon = compare === null || compare === 0 ? 'mdi:minus' : compare > 0 ? 'mdi:trending-up' : 'mdi:trending-down';
-        content = `<div class="es-summary"><div class="es-hero"><div class="es-hero-main"><div class="es-hero-label">${esc(source.name)} · ${esc(monthTitle)}</div>
-           <div class="es-total">${fmt(view.month, this._cfg.decimals)} <span class="es-unit">kWh</span></div></div>
-           ${this._cfg.show_comparison ? `<div class="es-comparison"><div class="es-comparison-text"><div class="es-comparison-title">Confronto con ${esc(priorTitle)}</div><div class="es-comparison-sub">Stessi giorni conclusi</div></div>
-             <span class="es-comparison-pill ${direction}" aria-label="Variazione consumi: ${esc(compareLabel)}">${icon(trendIcon)} ${esc(compareLabel)}</span></div>` : ''}</div>
+        const shortPrior = new Date(view.py, view.pm, 1).toLocaleDateString('it-IT', { month: 'short' }).replace(/\.$/, '');
+        content = `<div class="es-summary"><div class="es-hero"><div class="es-hero-head">
+           <div class="es-hero-label">${esc(source.name)} · ${esc(monthTitle)}</div>
+           ${this._cfg.show_comparison ? `<div class="es-comparison-context" aria-label="Confronto con ${esc(priorTitle)}, stessi giorni conclusi">
+              <span class="es-context-long">vs ${esc(priorTitle)} · stessi giorni</span>
+              <span class="es-context-short">vs ${esc(shortPrior)} · stessi giorni</span>
+              <span class="es-context-tiny">vs ${esc(shortPrior)}</span></div>` : ''}</div>
+           <div class="es-hero-values"><div class="es-total">${fmt(view.month, this._cfg.decimals)} <span class="es-unit">kWh</span></div>
+           ${this._cfg.show_comparison ? `<span class="es-comparison-pill ${direction}" aria-label="Variazione consumi: ${esc(compareLabel)}">${icon(trendIcon)} ${esc(compareLabel)}</span>` : ''}</div></div>
            ${powerValue !== null ? `<div class="es-note">Potenza attuale: <strong>${fmt(powerValue, 0)} W</strong></div>` : ''}</div>
            <div class="es-subgrid"><div class="es-stat"><div class="es-stat-label">${esc(priorTitle)} · mese concluso</div><div class="es-stat-val">${fmt(view.prior, this._cfg.decimals)} <span class="es-stat-unit">kWh</span></div></div>
            <div class="es-stat"><div class="es-stat-label">${meta.year} · ${view.yearComplete ? 'totale progressivo' : 'storico disponibile'}</div><div class="es-stat-val">${fmt(view.yearlyValue, this._cfg.decimals)} <span class="es-stat-unit">kWh</span></div></div></div>
