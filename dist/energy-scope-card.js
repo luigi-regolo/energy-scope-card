@@ -188,9 +188,9 @@
     *{box-sizing:border-box}
     :host([data-theme=light]){--es-bg:#FFFFFF;--es-panel:#F1F3EF;--es-text:#19221E;--es-muted:#68716C;--es-line:#E3E7E2;--es-other:#B1C5B8;--es-weak:#789A8A;--es-red:#B85D55}
     :host([data-theme=dark]){--es-bg:#101211;--es-panel:#191c1a;--es-text:#f5f7f4;--es-muted:#bbc5bd;--es-line:#2b302c;--es-other:#657D71;--es-weak:#88A99A;--es-red:#D27369}
-    :host{--es-accent:var(--edera-emerald-color,${GREEN});overflow-anchor:none}
-    .es-container{container-type:inline-size;min-width:0;max-width:100%;overflow-anchor:none}
-    .es-shell{padding:21px;border:1px solid var(--es-line);background:var(--es-bg);border-radius:26px;min-width:0;overflow:hidden;overflow-anchor:none}
+    :host{--es-accent:var(--edera-emerald-color,${GREEN})}
+    .es-container{container-type:inline-size;min-width:0;max-width:100%}
+    .es-shell{padding:21px;border:1px solid var(--es-line);background:var(--es-bg);border-radius:26px;min-width:0;overflow:hidden}
     .es-header{min-width:0;margin:2px 4px 17px}
     .es-eyebrow{font-size:10px;letter-spacing:1.7px;font-weight:750;line-height:1.1;color:var(--es-muted);text-transform:uppercase;margin:0 0 7px}
     .es-title{font-size:25px;line-height:1.14;font-weight:780;letter-spacing:-.7px;margin:0;overflow-wrap:anywhere}
@@ -200,13 +200,22 @@
     .es-source-tab[aria-pressed=true]{background:var(--es-accent);border-color:var(--es-accent);color:#fff}
     .es-summary{border:1px solid var(--es-line);border-radius:24px;background:var(--es-panel);padding:19px;margin-top:0;min-width:0}
     .es-hero-label{font-size:11px;color:var(--es-muted);font-weight:620}
-    .es-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(100px,max-content);align-items:start;gap:14px;min-width:0}.es-hero>div{min-width:0}
+    .es-hero{display:flex;flex-direction:column;gap:16px;min-width:0}.es-hero>div{min-width:0}
+    .es-hero-main{width:100%}
+    .es-comparison{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-width:0}
+    .es-comparison-text{min-width:0;flex:1}
+    .es-comparison-title{font-size:12px;font-weight:650;line-height:1.45;color:var(--es-text)}
+    .es-comparison-sub{font-size:11px;line-height:1.4;color:var(--es-muted);margin-top:2px}
+    .es-comparison-pill{display:inline-flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;min-width:0;flex:none;border-radius:999px;padding:8px 11px;font-size:14px;line-height:1.2;font-weight:750;font-variant-numeric:tabular-nums}
+    .es-comparison-pill ha-icon{--mdc-icon-size:16px;width:16px;height:16px;display:block;flex:none}
+    .es-comparison-pill.bad{background:#382725;color:#e48a80}
+    .es-comparison-pill.good{background:#113c2f;color:#88e1b4}
+    .es-comparison-pill.na{background:#292d2a;color:var(--es-muted)}
+    :host([data-theme=light]) .es-comparison-pill.bad{background:#fcebe9;color:#b85d55}
+    :host([data-theme=light]) .es-comparison-pill.good{background:#e2f0e7;color:#0E6B52}
+    :host([data-theme=light]) .es-comparison-pill.na{background:#e8ede9;color:#68716C}
     .es-total{font-size:38px;font-weight:780;line-height:1.16;letter-spacing:-1.2px;font-variant-numeric:tabular-nums;margin-top:9px;overflow-wrap:anywhere}
     .es-unit{font-size:14px;font-weight:600;color:var(--es-muted);letter-spacing:0}
-    .es-variation{text-align:right;min-width:0;max-width:150px;justify-self:end}.es-variation .es-hero-label{line-height:1.4}
-    .es-varval{font-size:16px;font-weight:740;color:var(--es-weak);margin-top:7px}
-    .es-varval.bad{color:var(--es-red)}
-    .es-varnote{font-size:11px;color:var(--es-muted);margin-top:4px}
     .es-subgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px;align-items:stretch}
     .es-stat{padding:12px 13px;min-width:0;background:var(--es-panel);border:1px solid var(--es-line);border-radius:17px;display:grid;grid-template-rows:minmax(34px,auto) auto;align-content:start}
     .es-stat-label{font-size:11px;color:var(--es-muted);line-height:1.4;align-self:start;min-height:34px}
@@ -219,7 +228,7 @@
     .es-tab[aria-pressed=true]{color:var(--es-text);background:var(--es-bg);box-shadow:0 0 0 1px var(--es-line)}
     :host([data-theme=dark]) .es-tabs{background:var(--es-bg)}
     :host([data-theme=dark]) .es-tab[aria-pressed=true]{background:var(--es-panel)}
-    .es-graph-region{min-height:236px;overflow-anchor:none}
+    .es-graph-region{min-height:236px}
     .es-plot{height:156px;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:3px;align-items:stretch;margin-top:17px;border-bottom:1px solid var(--es-line);background:linear-gradient(to top,transparent 24.6%,var(--es-line) 25%,transparent 25.4%,transparent 49.6%,var(--es-line) 50%,transparent 50.4%,transparent 74.6%,var(--es-line) 75%,transparent 75.4%)}
     .es-barcell{height:100%;display:flex;align-items:end;justify-content:center;gap:2px;min-width:0}
     .es-bar{min-width:2px;max-width:24px;width:43%;background:var(--es-accent);border-radius:4px 4px 0 0}
@@ -248,8 +257,8 @@
     .es-popup-section{margin-top:25px}
     .es-popup-section .es-popup-label{font-size:14px;font-weight:700;margin-bottom:13px}
     button:focus-visible{outline:2px solid var(--es-accent);outline-offset:2px}
-    @container (max-width:395px){.es-shell{padding:15px;border-radius:24px}.es-title{font-size:23px}.es-total{font-size:34px}.es-stat-val{font-size:20px}.es-plot{height:138px}.es-chart-empty{min-height:173px}.es-graph-region{min-height:214px}.es-summary{padding:15px}.es-hero{gap:9px}}
-    @container (max-width:325px){.es-total{font-size:30px}.es-unit{font-size:12px}.es-hero{grid-template-columns:minmax(0,1fr) minmax(82px,max-content)}.es-variation .es-hero-label{font-size:10px}.es-stat{padding:10px}.es-stat-val{font-size:18px}}
+    @container (max-width:395px){.es-shell{padding:15px;border-radius:24px}.es-title{font-size:23px}.es-total{font-size:34px}.es-stat-val{font-size:20px}.es-plot{height:138px}.es-chart-empty{min-height:173px}.es-graph-region{min-height:214px}.es-summary{padding:15px}.es-hero{gap:16px}}
+    @container (max-width:325px){.es-total{font-size:30px}.es-unit{font-size:12px}.es-comparison-pill{font-size:12px;padding:7px 9px}.es-comparison-title{font-size:11px}.es-stat{padding:10px}.es-stat-val{font-size:18px}}
     @media(max-width:599px){.es-dialog{width:min(350px,100%);max-height:min(68vh,560px);max-height:min(68dvh,560px);border-radius:24px}.es-backdrop{padding:max(20px,env(safe-area-inset-top)) 18px max(20px,env(safe-area-inset-bottom))}}
     @media(max-height:480px){.es-dialog{max-height:calc(100dvh - 24px)}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
@@ -298,7 +307,8 @@
       const tz = this._tz(), now = parts(new Date(), tz), cache = this._records.get(id);
       const token = `${tz}:${now.year}-${now.month}-${now.day}`;
       if (cache?.loading || (cache?.token === token && Date.now() - cache.fetchedAt < REFRESH_MS)) return;
-      const record = { loading: true, error: '', monthly: cache?.monthly || [], daily: cache?.daily || [], token, fetchedAt: Date.now() };
+      const record = { loading: true, error: cache?.error || '', monthly: cache?.monthly || [], daily: cache?.daily || [],
+        revision: cache?.revision || 0, token, fetchedAt: Date.now() };
       this._records.set(id, record);
       // Query at civil midnights in the Home Assistant timezone, avoiding DST shortcuts.
       const firstMonthly = zonedMidnight(now.year - 1, 0, 1, tz);
@@ -311,11 +321,15 @@
       this._render();
       Promise.allSettled([query(firstDaily, 'day'), query(firstMonthly, 'month')]).then((out) => {
         if (this._records.get(id) !== record) return;
-        record.daily = out[0].status === 'fulfilled' ? rowsFor(out[0].value, id) : [];
-        record.monthly = out[1].status === 'fulfilled' ? rowsFor(out[1].value, id) : [];
+        const nextDaily = out[0].status === 'fulfilled' ? rowsFor(out[0].value, id) : record.daily;
+        const nextMonthly = out[1].status === 'fulfilled' ? rowsFor(out[1].value, id) : record.monthly;
+        if (JSON.stringify(nextDaily) !== JSON.stringify(record.daily) ||
+            JSON.stringify(nextMonthly) !== JSON.stringify(record.monthly)) record.revision++;
+        record.daily = nextDaily;
+        record.monthly = nextMonthly;
         record.error = out.every((x) => x.status === 'rejected') ? 'Statistiche non disponibili: verifica Recorder e autorizzazioni.' : '';
-        record.loading = false; record.fetchedAt = Date.now(); this._signature = ''; this._render();
-      }).catch(() => { if (this._records.get(id) === record) { record.loading = false; record.error = 'Impossibile leggere le statistiche.'; this._render(); } });
+        record.loading = false; record.fetchedAt = Date.now(); this._render();
+      }).catch(() => { if (this._records.get(id) === record) { record.loading = false; record.error = 'Impossibile leggere le statistiche.'; record.loading = false; this._render(); } });
     }
     _chartFor(view) {
       const { now, pm, py, daily, monthly } = view;
@@ -407,11 +421,12 @@
         last: valid ? fmt(view.prior, this._cfg.decimals) : entity?.attributes?.last_period,
         available: entity?.attributes?.state_class, powerValue: powerValue === null ? null : fmt(powerValue, 0),
         date: `${view.now.year}-${view.now.month}-${view.now.day}`,
-        fetch: record?.fetchedAt, fetching: record?.loading, error: record?.error, exists: !!entity });
+        statsRevision: record?.revision || 0, initialLoading: !!record?.loading && !(record?.daily?.length || record?.monthly?.length),
+        error: record?.error, exists: !!entity });
       if (sig === this._signature) return;
       this._signature = sig;
       const prevScroll = this.shadowRoot.querySelector('.es-dialog-scroll')?.scrollTop ?? 0;
-      this.setAttribute('data-theme', this._theme());
+      if (this.getAttribute('data-theme') !== this._theme()) this.setAttribute('data-theme', this._theme());
       const meta = view.now;
       const monthTitle = new Date(meta.year, meta.month, 1).toLocaleDateString('it-IT', { month: 'long', year: 'numeric' });
       const priorTitle = new Date(view.py, view.pm, 1).toLocaleDateString('it-IT', { month: 'long', year: 'numeric' });
@@ -428,10 +443,12 @@
       } else if (!valid) {
         content = '<div class="es-empty" role="alert">Il sensore deve avere device_class energy, state_class total/total_increasing e unità Wh, kWh o MWh.</div>';
       } else {
-        content = `<div class="es-summary"><div class="es-hero"><div><div class="es-hero-label">${esc(source.name)} · ${esc(monthTitle)}</div>
+        const direction = compare === null ? 'na' : compare > 0 ? 'bad' : 'good';
+        const trendIcon = compare === null || compare === 0 ? 'mdi:minus' : compare > 0 ? 'mdi:trending-up' : 'mdi:trending-down';
+        content = `<div class="es-summary"><div class="es-hero"><div class="es-hero-main"><div class="es-hero-label">${esc(source.name)} · ${esc(monthTitle)}</div>
            <div class="es-total">${fmt(view.month, this._cfg.decimals)} <span class="es-unit">kWh</span></div></div>
-           ${this._cfg.show_comparison ? `<div class="es-variation"><div class="es-hero-label">Stessi giorni conclusi</div><div class="es-varval ${compare !== null && compare > 0 ? 'bad' : ''}">${esc(compareLabel)}</div><div class="es-varnote">${compare === null ? 'Storico comparabile non disponibile' : (compare > 0 ? 'Consumo superiore' : compare < 0 ? 'Consumo inferiore' : 'Consumo invariato')}</div></div>` : ''}</div>
-           
+           ${this._cfg.show_comparison ? `<div class="es-comparison"><div class="es-comparison-text"><div class="es-comparison-title">Confronto con ${esc(priorTitle)}</div><div class="es-comparison-sub">Stessi giorni conclusi</div></div>
+             <span class="es-comparison-pill ${direction}" aria-label="Variazione consumi: ${esc(compareLabel)}">${icon(trendIcon)} ${esc(compareLabel)}</span></div>` : ''}</div>
            ${powerValue !== null ? `<div class="es-note">Potenza attuale: <strong>${fmt(powerValue, 0)} W</strong></div>` : ''}</div>
            <div class="es-subgrid"><div class="es-stat"><div class="es-stat-label">${esc(priorTitle)} · mese concluso</div><div class="es-stat-val">${fmt(view.prior, this._cfg.decimals)} <span class="es-stat-unit">kWh</span></div></div>
            <div class="es-stat"><div class="es-stat-label">${meta.year} · ${view.yearComplete ? 'totale progressivo' : 'storico disponibile'}</div><div class="es-stat-val">${fmt(view.yearlyValue, this._cfg.decimals)} <span class="es-stat-unit">kWh</span></div></div></div>
