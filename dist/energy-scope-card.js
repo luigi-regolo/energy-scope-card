@@ -1,5 +1,5 @@
 /*
- * Energy Scope Card — development build (unreleased)
+ * Energy Scope Card — development version 0.1 (unreleased)
  * Copyright (c) 2026 luigi-regolo
  * SPDX-License-Identifier: GPL-3.0-only
  *
