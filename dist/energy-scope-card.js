@@ -490,7 +490,15 @@
     .es-editor-check input{width:18px;height:18px;accent-color:var(--edera-emerald-color,${GREEN})}
     .es-editor-help{font-size:11px;line-height:1.5;color:var(--secondary-text-color,#68716C);margin-top:7px}
     .es-editor-notice{padding:10px 12px;color:var(--error-color,#B85D55);font-size:12px;margin-top:10px}
-    .es-editor-source{min-height:38px}.es-editor-source ha-selector{display:block;width:100%;--mdc-theme-primary:var(--edera-emerald-color,${GREEN})}
+    .es-editor-source-row{display:none}
+    .es-editor-native .es-editor-source-row{display:flex}
+    .es-editor-select-row{display:flex;align-items:stretch;gap:8px;min-width:0}
+    .es-editor-source{flex:1;min-width:0;min-height:38px}
+    .es-editor-source ha-selector{display:block;width:100%;--mdc-theme-primary:var(--edera-emerald-color,${GREEN})}
+    .es-editor-select-row .es-editor-input{flex:1;min-width:0}
+    .es-editor-clear{display:flex;align-items:center;justify-content:center;flex:none;width:42px;min-height:42px;border:1px solid var(--divider-color,#E1E5E1);border-radius:11px;background:var(--secondary-background-color,#F1F3EF);color:var(--secondary-text-color,#68716C);cursor:pointer}
+    .es-editor-clear ha-icon{display:block;width:18px;height:18px;--mdc-icon-size:18px}
+    .es-editor-clear:hover{color:var(--primary-text-color,#19221E);border-color:var(--edera-emerald-color,${GREEN})}
     .es-editor-native .es-editor-fallback{display:none}
     .es-editor-input:focus-visible,button:focus-visible{outline:2px solid var(--edera-emerald-color,${GREEN});outline-offset:2px}
   `;
@@ -499,7 +507,16 @@
     constructor() {
       super(); this.attachShadow({ mode: 'open' });
       this._cfg = normalize({}); this._hass = null; this._tab = 'sorgenti'; this._nativeTried = false; this._notice = '';
-      this.shadowRoot.addEventListener('click', (e) => { const t = e.target.closest('[data-tab]'); if (t) { this._tab = t.dataset.tab; this._render(); } });
+      this.shadowRoot.addEventListener('click', (e) => {
+        const clear = e.target.closest('[data-clear-entity]');
+        if (clear) {
+          const field = clear.dataset.clearEntity;
+          if (['energy_entity', 'power_entity', 'house_energy_entity', 'house_power_entity'].includes(field)) this._chooseEntity(field, '');
+          return;
+        }
+        const t = e.target.closest('[data-tab]');
+        if (t) { this._tab = t.dataset.tab; this._render(); }
+      });
       this.shadowRoot.addEventListener('change', (e) => this._change(e));
     }
     connectedCallback() { this._render(); void this._ensureNative(); }
@@ -515,7 +532,13 @@
     _save(changes) { this._cfg = normalize({ ...this._cfg, ...changes }); this._notice = '';
       this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: { ...this._cfg } }, bubbles: true, composed: true })); this._render(); }
     _field(k, label, hint = '') { return `<div class="es-editor-field"><div class="es-editor-label">${esc(label)}</div><input class="es-editor-input" data-key="${k}" maxlength="70" value="${esc(this._cfg[k])}">${hint ? `<div class="es-editor-help">${esc(hint)}</div>` : ''}</div>`; }
-    _entityField(k, label, hint = '') { return `<div class="es-editor-field"><div class="es-editor-label">${esc(label)}</div><div class="es-editor-source" data-native-slot="${k}"></div><div class="es-editor-fallback"><input class="es-editor-input" data-key="${k}" value="${esc(this._cfg[k])}" placeholder="sensor.nome_entita"></div>${hint ? `<div class="es-editor-help">${esc(hint)}</div>` : ''}</div>`; }
+    _entityField(k, label, hint = '') {
+      const clear = this._cfg[k] ? `<button class="es-editor-clear" type="button" data-clear-entity="${k}" title="Rimuovi entità selezionata" aria-label="Rimuovi ${esc(label)}">${icon('mdi:close')}</button>` : '';
+      return `<div class="es-editor-field"><div class="es-editor-label">${esc(label)}</div>
+        <div class="es-editor-select-row es-editor-source-row"><div class="es-editor-source" data-native-slot="${k}"></div>${clear}</div>
+        <div class="es-editor-fallback"><div class="es-editor-select-row"><input class="es-editor-input" data-key="${k}" value="${esc(this._cfg[k])}" placeholder="sensor.nome_entita">${clear}</div></div>
+        ${hint ? `<div class="es-editor-help">${esc(hint)}</div>` : ''}</div>`;
+    }
     _check(k, label) { return `<label class="es-editor-check"><span>${esc(label)}</span><input type="checkbox" data-check="${k}" ${this._cfg[k] ? 'checked' : ''}></label>`; }
     _render() {
       if (!this.isConnected) return;
