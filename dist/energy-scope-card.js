@@ -20,6 +20,24 @@
   const count = (v, fallback = 2) => Number.isInteger(Number(v)) ? Math.max(0, Math.min(3, Number(v))) : fallback;
   const icon = (name) => `<ha-icon icon="${esc(name)}" aria-hidden="true"></ha-icon>`;
   const safeId = (value) => ENERGY_ID.test(String(value ?? '').trim()) ? String(value).trim() : '';
+  // Keep DOM nodes and focus stable when Recorder or the selected period updates.
+  const patchNodes = (current, desired) => {
+    let i = 0;
+    while (i < desired.childNodes.length || i < current.childNodes.length) {
+      const next = desired.childNodes[i], old = current.childNodes[i];
+      if (!next) { old.remove(); continue; }
+      if (!old) { current.appendChild(next.cloneNode(true)); i++; continue; }
+      if (old.isEqualNode(next)) { i++; continue; }
+      if (old.nodeType !== next.nodeType || old.nodeName !== next.nodeName) {
+        current.replaceChild(next.cloneNode(true), old); i++; continue;
+      }
+      if (old.nodeType !== 1) { old.nodeValue = next.nodeValue; i++; continue; }
+      for (const a of Array.from(old.attributes)) if (!next.hasAttribute(a.name)) old.removeAttribute(a.name);
+      for (const a of Array.from(next.attributes)) if (old.getAttribute(a.name) !== a.value) old.setAttribute(a.name, a.value);
+      patchNodes(old, next);
+      i++;
+    }
+  };
   const fmt = (value, decimals = 2) => value === null || !Number.isFinite(value) ? 'N/D' : value.toLocaleString('it-IT', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
   const pct = (newValue, oldValue) => newValue === null || oldValue === null || oldValue <= 0 ? null : (newValue - oldValue) / oldValue * 100;
   const configsEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
@@ -91,10 +109,9 @@
   const isMonthlyUtility = (entity, now, tz) => {
     if (!energyValid(entity) || !entity.attributes?.next_reset || entity.attributes?.last_period === undefined) return false;
     const next = parts(new Date(entity.attributes.next_reset), tz);
-    const last = entity.attributes.last_reset ? parts(new Date(entity.attributes.last_reset), tz) : null;
     const target = new Date(Date.UTC(now.year, now.month + 1, 1));
-    return next.year === target.getUTCFullYear() && next.month === target.getUTCMonth() && next.day === 1 &&
-      (!last || (last.year === now.year && last.month === now.month && last.day === 1));
+    // A monthly utility meter is determined from the next reset, which is less sensitive to clock rounding.
+    return next.year === target.getUTCFullYear() && next.month === target.getUTCMonth() && next.day === 1;
   };
   const rowsFor = (result, id) => Array.isArray(result?.[id]) ? result[id] : [];
   const readChange = (row) => {
@@ -151,11 +168,19 @@
     const thisYearSum = sumMonthlyRange(monthly, now.year, now.month - 1);
     const lastYearSum = sumMonthlyRange(monthly, now.year - 1, now.month - 1);
     const monthsPresent = Array.from({ length: now.month }, (_, m) => monthly.has(key(now.year, m))).filter(Boolean).length;
-    const knownMonths = Array.from({ length: now.month }, (_, m) => monthly.get(key(now.year, m))).filter((v) => v !== undefined);
-    const yearlyValue = knownMonths.length || month !== null ? knownMonths.reduce((a, b) => a + b, 0) + (month ?? 0) : null;
-    return { now, py, pm, monthly, daily, month, prior, utility, comparison, actualComparable, priorComparable,
-      comparedDays: n, yearlyValue, yearComplete: thisYearSum !== null && month !== null, monthsPresent,
-      yearComparison: pct(thisYearSum, lastYearSum), dataPending: record?.loading, error: record?.error || '' };
+    const lastMonth = monthly.get(key(py, pm));
+    const statsConsistent = !utility || lastMonth === undefined || prior === null ||
+      Math.abs(lastMonth - prior) <= Math.max(0.05, prior * 0.05);
+    // An annual total requires every completed month, not an arbitrary partial sum.
+    const yearComplete = thisYearSum !== null && month !== null && statsConsistent;
+    const yearlyValue = yearComplete ? thisYearSum + month : null;
+    const compareConsistent = statsConsistent && (month === null || actualComparable === null || actualComparable <= month + Math.max(0.05, month * 0.05)) &&
+      (prior === null || priorComparable === null || priorComparable <= prior + Math.max(0.05, prior * 0.05));
+    return { now, py, pm, monthly, daily, month, prior, utility,
+      comparison: compareConsistent ? comparison : null, actualComparable, priorComparable,
+      comparedDays: n, yearlyValue, yearComplete, statsConsistent, monthsPresent,
+      yearComparison: statsConsistent && thisYearSum !== null && lastYearSum !== null ? pct(thisYearSum, lastYearSum) : null,
+      dataPending: record?.loading, error: record?.error || '' };
   };
 
   const CSS = `
@@ -165,19 +190,20 @@
     :host([data-theme=dark]){--es-bg:#202221;--es-panel:#191B1A;--es-text:#F7F5F0;--es-muted:#C6CAC7;--es-line:#343735;--es-other:#657D71;--es-weak:#88A99A;--es-red:#D27369}
     :host{--es-accent:var(--edera-emerald-color,${GREEN})}
     .es-container{container-type:inline-size;min-width:0;max-width:100%}
-    .es-shell{padding:21px;border:1px solid var(--es-line);background:var(--es-bg);border-radius:24px;min-width:0;overflow:hidden}
-    .es-eyebrow{font-size:10px;letter-spacing:1.35px;font-weight:700;color:var(--es-muted);text-transform:uppercase}
-    .es-title{font-size:25px;line-height:1.16;font-weight:780;letter-spacing:-.7px;margin-top:8px;overflow-wrap:anywhere}
+    .es-shell{padding:21px;border:1px solid var(--es-line);background:var(--es-bg);border-radius:26px;min-width:0;overflow:hidden}
+    .es-header{min-width:0;margin:2px 4px 17px}
+    .es-eyebrow{font-size:10px;letter-spacing:1.7px;font-weight:750;line-height:1.1;color:var(--es-muted);text-transform:uppercase;margin:0 0 7px}
+    .es-title{font-size:25px;line-height:1.14;font-weight:780;letter-spacing:-.7px;margin:0;overflow-wrap:anywhere}
     .es-title b{color:var(--es-accent)}
     .es-source-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px}
     .es-source-tab{border:1px solid var(--es-line);background:var(--es-panel);color:var(--es-text);border-radius:10px;padding:8px 12px;font-size:12px;cursor:pointer}
     .es-source-tab[aria-pressed=true]{background:var(--es-accent);border-color:var(--es-accent);color:#fff}
-    .es-summary{border:1px solid var(--es-line);border-radius:21px;background:var(--es-panel);padding:16px;margin-top:18px;min-width:0}
+    .es-summary{border:1px solid var(--es-line);border-radius:24px;background:var(--es-panel);padding:19px;margin-top:0;min-width:0}
     .es-hero-label{font-size:11px;color:var(--es-muted);font-weight:620}
-    .es-hero{display:flex;align-items:end;justify-content:space-between;gap:12px;flex-wrap:wrap}
-    .es-total{font-size:40px;font-weight:780;line-height:1.2;letter-spacing:-1.2px;font-variant-numeric:tabular-nums;margin-top:6px;overflow-wrap:anywhere}
+    .es-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(100px,max-content);align-items:start;gap:14px;min-width:0}.es-hero>div{min-width:0}
+    .es-total{font-size:38px;font-weight:780;line-height:1.16;letter-spacing:-1.2px;font-variant-numeric:tabular-nums;margin-top:9px;overflow-wrap:anywhere}
     .es-unit{font-size:14px;font-weight:600;color:var(--es-muted);letter-spacing:0}
-    .es-variation{text-align:right;min-width:98px}
+    .es-variation{text-align:right;min-width:0;max-width:150px;justify-self:end}.es-variation .es-hero-label{line-height:1.4}
     .es-varval{font-size:16px;font-weight:740;color:var(--es-weak);margin-top:7px}
     .es-varval.bad{color:var(--es-red)}
     .es-varnote{font-size:11px;color:var(--es-muted);margin-top:4px}
@@ -200,26 +226,27 @@
     .es-legend{display:flex;gap:15px;flex-wrap:wrap;color:var(--es-muted);font-size:11px;margin-top:13px}
     .es-dot{display:inline-block;width:9px;height:9px;border-radius:3px;background:var(--es-accent);margin-right:6px;vertical-align:middle}
     .es-dot.other{background:var(--es-other)}
-    .es-chart-empty{margin-top:15px;padding:25px 12px;border:1px dashed var(--es-line);border-radius:14px;color:var(--es-muted);font-size:12px;text-align:center}
+    .es-chart-empty{margin-top:15px;padding:24px 12px;border:1px dashed var(--es-line);border-radius:14px;color:var(--es-muted);font-size:12px;text-align:center;min-height:156px;display:flex;align-items:center;justify-content:center}
     .es-details{display:flex;align-items:center;justify-content:space-between;width:100%;min-width:0;gap:12px;min-height:42px;padding:10px 14px;margin-top:14px;border:1px solid var(--es-accent);border-radius:16px;background:var(--es-accent);color:#fff;text-align:left;font-weight:650;font-size:12px;cursor:pointer}
     .es-details[aria-expanded=true],.es-details:hover{background:var(--es-accent);color:#fff}
     .es-details-label{display:inline-flex;align-items:center;gap:8px}.es-details ha-icon{--mdc-icon-size:17px;width:17px;height:17px}
     .es-empty{padding:20px 4px;color:var(--es-muted);line-height:1.6;font-size:13px}
-    .es-backdrop{position:fixed;inset:0;z-index:9999;background:#0009;display:grid;place-items:center;overflow:hidden;overscroll-behavior:none;padding:max(20px,env(safe-area-inset-top)) 18px max(20px,env(safe-area-inset-bottom))}
+    .es-backdrop{position:fixed;inset:0;z-index:9999;background:#0009;display:grid;place-items:center;overflow:hidden;overscroll-behavior:none;touch-action:none;padding:max(20px,env(safe-area-inset-top)) 18px max(20px,env(safe-area-inset-bottom))}
     .es-dialog{display:flex;flex-direction:column;background:var(--es-bg);color:var(--es-text);border:1px solid var(--es-line);border-radius:26px;width:min(390px,100%);max-height:min(82vh,720px);max-height:min(82dvh,720px);box-shadow:0 18px 60px #0005;overflow:hidden;min-width:0}
-    .es-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:70px;padding:17px 19px 12px;flex:none;background:var(--es-bg);border-bottom:1px solid var(--es-line)}
-    .es-dialog-head-title{font-size:17px;font-weight:650}.es-dialog-sub{font-size:11px;color:var(--es-muted);margin-top:5px}
+    .es-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:62px;padding:18px 19px 12px;flex:none;background:var(--es-bg)}
+    .es-dialog-head-title{font-size:17px;font-weight:600;line-height:1.3}.es-dialog-sub{font-size:12px;color:var(--es-muted);margin-top:4px}
     .es-close{display:flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:var(--es-panel);color:var(--es-text);width:36px;height:36px;flex:none;line-height:0;padding:0;cursor:pointer}
     .es-close ha-icon{display:block;width:18px;height:18px;--mdc-icon-size:18px;flex:none}
-    .es-dialog-scroll{min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:15px 19px 19px}
+    .es-dialog-scroll{min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding:8px 19px 19px}
     .es-popup-label{font-size:13px;font-weight:700;margin:4px 0 10px}
     .es-popup-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--es-line);font-size:12px}
     .es-popup-row span{color:var(--es-muted)}.es-popup-row strong{font-variant-numeric:tabular-nums;text-align:right}
     .es-popup-panel{border:1px solid var(--es-line);background:var(--es-panel);border-radius:16px;padding:13px;margin:9px 0 15px}
     .es-popup-big{font-size:24px;font-weight:750;font-variant-numeric:tabular-nums;margin-top:6px}
     button:focus-visible{outline:2px solid var(--es-accent);outline-offset:2px}
-    @container (max-width:395px){.es-shell{padding:13px}.es-title{font-size:23px}.es-total{font-size:34px}.es-stat-val{font-size:20px}.es-plot{height:138px}.es-summary{padding:13px}}
-    @container (max-width:325px){.es-variation{text-align:left}.es-hero{align-items:start;flex-direction:column}.es-stat{padding:10px}.es-stat-val{font-size:18px}}
+    @container (max-width:395px){.es-shell{padding:15px;border-radius:24px}.es-title{font-size:23px}.es-total{font-size:34px}.es-stat-val{font-size:20px}.es-plot{height:138px}.es-chart-empty{min-height:138px}.es-summary{padding:15px}.es-hero{gap:9px}}
+    @container (max-width:325px){.es-total{font-size:30px}.es-unit{font-size:12px}.es-hero{grid-template-columns:minmax(0,1fr) minmax(82px,max-content)}.es-variation .es-hero-label{font-size:10px}.es-stat{padding:10px}.es-stat-val{font-size:18px}}
+    @media(max-width:599px){.es-dialog{width:min(350px,100%);max-height:min(68vh,560px);max-height:min(68dvh,560px);border-radius:24px}.es-backdrop{padding:max(20px,env(safe-area-inset-top)) 18px max(20px,env(safe-area-inset-bottom))}}
     @media(max-height:480px){.es-dialog{max-height:calc(100dvh - 24px)}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
   `;
@@ -295,7 +322,7 @@
         Array.from({ length: now.day }, (_, i) => ({ id: i + 1, now: daily.get(dateKey({ year: now.year, month: now.month, day: i + 1 })) ?? null,
           other: i < daysOf(py, pm) ? daily.get(dateKey({ year: py, month: pm, day: i + 1 })) ?? null : null }));
       const present = values.filter((d) => d.now !== null || d.other !== null);
-      if (!present.length) return `<div class="es-chart-empty" role="status">${view.dataPending ? 'Caricamento statistiche…' : 'Storico non disponibile per questo periodo.'}</div>`;
+      if (!present.length) return `<div class="es-chart-empty" role="status">${view.dataPending ? 'Caricamento statistiche…' : 'Nessuna statistica disponibile per questo periodo.'}</div>`;
       const maximum = Math.max(0.001, ...values.map((x) => Math.max(x.now ?? 0, x.other ?? 0))) * 1.1;
       const bars = values.map((b) => {
         const entry = (v, kind) => v === null ? '' : `<span class="es-bar ${kind}" style="height:${Math.max(v > 0 ? 2 : 0, Math.min(100, v / maximum * 100)).toFixed(2)}%" title="${esc(`${b.id}: ${fmt(v, 2)} kWh`)}"></span>`;
@@ -318,10 +345,9 @@
           ${line(`Mese precedente: primi ${view.comparedDays} giorni`, `${fmt(view.priorComparable, this._cfg.decimals)} kWh`)}
           ${line('Variazione periodi equivalenti', view.comparison === null ? 'N/D' : `${view.comparison > 0 ? '+' : ''}${fmt(view.comparison, 1)}%`)}
           <div class="es-popup-label" style="margin-top:19px">Statistiche annuali</div>
-          ${line(`Totale ${view.now.year}${yearNote}`, `${fmt(view.yearlyValue, this._cfg.decimals)} kWh`)}
-          ${line('Mesi conclusi disponibili', `${view.monthsPresent} / ${view.now.month}`)}
-          ${line('Confronto anni, mesi conclusi', view.yearComparison === null ? 'N/D' : `${view.yearComparison > 0 ? '+' : ''}${fmt(view.yearComparison, 1)}%`)}
-          <div class="es-note">I confronti sono mostrati soltanto quando Recorder fornisce tutti i dati necessari. I consumi delle prese e il futuro misuratore generale non vengono sommati.</div>
+          ${line(`Totale ${view.now.year}${yearNote}`, view.yearComplete ? `${fmt(view.yearlyValue, this._cfg.decimals)} kWh` : 'Dati insufficienti')}
+          ${line(`Storico ${view.now.year}`, `${view.monthsPresent} mesi disponibili su ${view.now.month}`)}
+          ${line(`Confronto con il ${view.now.year - 1}`, view.yearComparison === null ? 'Dati insufficienti' : `${view.yearComparison > 0 ? '+' : ''}${fmt(view.yearComparison, 1)}%`)}
           ${view.error ? `<div class="es-note" role="alert">${esc(view.error)}</div>` : ''}
           </div></div></div>`;
     }
@@ -342,7 +368,7 @@
     }
     _close() {
       this._dialog = false; this._signature = ''; this._render();
-      this.shadowRoot.querySelector('[data-details]')?.focus();
+      this.shadowRoot.querySelector('[data-details]')?.focus({ preventScroll: true });
     }
     _onClick(e) {
       if (e.target.closest('[data-close]') || e.target.matches('[data-backdrop]')) { this._close(); return; }
@@ -351,7 +377,7 @@
       const chart = e.target.closest('[data-chart]');
       if (chart) { this._chart = chart.dataset.chart; this._signature = ''; this._render(); return; }
       if (e.target.closest('[data-details]')) {
-        this._dialog = true; this._signature = ''; this._render(); this.shadowRoot.querySelector('[data-close]')?.focus();
+        this._dialog = true; this._signature = ''; this._render(); this.shadowRoot.querySelector('[data-close]')?.focus({ preventScroll: true });
       }
     }
     _onKeydown(e) {
@@ -397,7 +423,7 @@
         content = `<div class="es-summary"><div class="es-hero"><div><div class="es-hero-label">${esc(source.name)} · ${esc(monthTitle)}</div>
            <div class="es-total">${fmt(view.month, this._cfg.decimals)} <span class="es-unit">kWh</span></div></div>
            ${this._cfg.show_comparison ? `<div class="es-variation"><div class="es-hero-label">Stessi giorni conclusi</div><div class="es-varval ${compare !== null && compare > 0 ? 'bad' : ''}">${esc(compareLabel)}</div><div class="es-varnote">${compare === null ? 'Storico comparabile non disponibile' : (compare > 0 ? 'Consumo superiore' : compare < 0 ? 'Consumo inferiore' : 'Consumo invariato')}</div></div>` : ''}</div>
-           ${!view.utility && view.month !== null ? '<div class="es-note">Consumo aggiornato all’ultima statistica disponibile.</div>' : ''}
+           
            ${powerValue !== null ? `<div class="es-note">Potenza attuale: <strong>${fmt(powerValue, 0)} W</strong></div>` : ''}</div>
            <div class="es-subgrid"><div class="es-stat"><div class="es-stat-label">${esc(priorTitle)} · mese concluso</div><div class="es-stat-val">${fmt(view.prior, this._cfg.decimals)} <span class="es-stat-unit">kWh</span></div></div>
            <div class="es-stat"><div class="es-stat-label">${meta.year} · ${view.yearComplete ? 'totale progressivo' : 'storico disponibile'}</div><div class="es-stat-val">${fmt(view.yearlyValue, this._cfg.decimals)} <span class="es-stat-unit">kWh</span></div></div></div>
@@ -406,12 +432,15 @@
              ${canYear ? `<button class="es-tab" type="button" data-chart="year" aria-pressed="${this._chart === 'year'}">Anno</button>` : ''}</div></div>
              ${this._chartFor(view)}<div class="es-note">${this._chart === 'month' ? 'Consumi giornalieri; il giorno attuale può essere parziale.' : 'Consumi mensili; il mese corrente è progressivo.'}</div>` : ''}
            ${view.error ? `<div class="es-note" role="alert">${esc(view.error)}</div>` : ''}
-           ${this._cfg.show_details ? `<button type="button" class="es-details" data-details="true" aria-haspopup="dialog" aria-expanded="${this._dialog}"><span class="es-details-label">${icon('mdi:format-list-bulleted')} Dettagli e statistiche</span>${icon('mdi:chevron-right')}</button>` : ''}`;
+           ${this._cfg.show_details ? `<button type="button" class="es-details" data-details="true" aria-haspopup="dialog" aria-expanded="${this._dialog}"><span class="es-details-label">${icon('mdi:chart-line')} Dettagli e statistiche</span>${icon('mdi:chevron-right')}</button>` : ''}`;
       }
-      this.shadowRoot.innerHTML = `<style>${CSS}</style><div class="es-container"><div class="es-shell">
-         <header><div class="es-eyebrow">${esc(this._cfg.eyebrow)}</div><div class="es-title">${esc(this._cfg.title)}<b>.</b></div></header>
+      const nextMarkup = `<style>${CSS}</style><div class="es-container"><div class="es-shell">
+         <header class="es-header"><div class="es-eyebrow">${esc(this._cfg.eyebrow)}</div><div class="es-title">${esc(this._cfg.title)}<b>.</b></div></header>
          ${hasHouse ? `<div class="es-source-tabs"><button class="es-source-tab" type="button" data-source="plugs" aria-pressed="${this._source !== 'house'}">${esc(this._cfg.source_name)}</button><button class="es-source-tab" type="button" data-source="house" aria-pressed="${this._source === 'house'}">${esc(this._cfg.house_source_name)}</button></div>` : ''}
          ${content}</div></div>${this._dialog && valid ? this._popup(view, source) : ''}`;
+      const nextTree = document.createElement('template');
+      nextTree.innerHTML = nextMarkup;
+      patchNodes(this.shadowRoot, nextTree.content);
       const popup = this.shadowRoot.querySelector('.es-dialog-scroll');
       if (popup) popup.scrollTop = prevScroll;
       this._lock(!!popup);
@@ -464,9 +493,9 @@
         ${this._entityField('energy_entity','Energia prese (kWh)','Obbligatorio per l’analisi attuale. Accetta total o total_increasing.')}
         ${this._field('source_name','Nome sorgente prese')}
         ${this._entityField('power_entity','Potenza prese (W) · opzionale','Usa un sensore di potenza aggregata, non quello di un singolo elettrodomestico se vuoi il totale delle prese.')}
-        ${this._entityField('house_energy_entity','Energia totale casa (kWh) · futura','Quando installerai Shelly 3EM Gen3, seleziona il sensore totale di energia importata compatibile.')}
+        ${this._entityField('house_energy_entity','Energia totale casa (kWh)','Opzionale: seleziona un sensore di consumo generale compatibile.')}
         ${this._field('house_source_name','Nome sorgente casa')}
-        ${this._entityField('house_power_entity','Potenza totale casa (W) · futura','Facoltativo; seleziona il sensore totale della casa, non una singola fase.')}`;
+        ${this._entityField('house_power_entity','Potenza totale casa (W)','Facoltativo; seleziona il sensore totale della casa, non una singola fase.')}`;
       if (this._tab === 'grafici') body = `<div class="es-editor-heading">Grafici e statistiche</div><div class="es-editor-description">Le statistiche vengono lette esclusivamente dal Recorder della tua istanza Home Assistant.</div>
         ${this._check('show_month_chart','Grafico giornaliero · Mese')}${this._check('show_year_chart','Grafico mensile · Anno')}${this._check('show_comparison','Confronto percentuale con il mese precedente')}${this._check('show_details','Pulsante Dettagli e statistiche')}
         <div class="es-editor-help">Le percentuali sono calcolate sui giorni completi comparabili. Se lo storico è insufficiente, viene mostrato N/D.</div>`;
@@ -486,17 +515,28 @@
       if (!native) return;
       this.shadowRoot.querySelectorAll('[data-native-slot]').forEach((slot) => {
         const id = slot.dataset.nativeSlot;
-        const el = document.createElement('ha-selector'); el.hass = this._hass; el.selector = { entity: { domain: ['sensor'] } }; el.value = c[id] || '';
-        el.addEventListener('value-changed', (e) => { e.stopPropagation(); this._save({ [id]: e.detail?.value || '' }); });
+        const el = document.createElement('ha-selector'); el.hass = this._hass; el.selector = { entity: { filter: [{ domain: 'sensor', device_class: ['power_entity', 'house_power_entity'].includes(id) ? 'power' : 'energy' }] } }; el.value = c[id] || '';
+        el.addEventListener('value-changed', (e) => { e.stopPropagation(); this._chooseEntity(id, e.detail?.value || ''); });
         slot.appendChild(el);
       });
+    }
+    _chooseEntity(field, value) {
+      if (value && !safeId(value)) { this._notice = 'Seleziona un sensore valido.'; this._render(); return; }
+      const entity = this._hass?.states?.[value];
+      const isPower = field === 'power_entity' || field === 'house_power_entity';
+      if (value && entity && !(isPower ? powerValid(entity) : energyValid(entity))) {
+        this._notice = isPower ? 'Seleziona un sensore di potenza compatibile (W o kW).' :
+          'Seleziona un sensore di energia compatibile (Wh, kWh o MWh).';
+        this._render(); return;
+      }
+      this._save({ [field]: value });
     }
     _change(e) {
       const t = e.target;
       if (t.dataset.check) { this._save({ [t.dataset.check]: t.checked }); return; }
       if (!t.dataset.key) return;
       const field = t.dataset.key;
-      if (field.endsWith('_entity') && t.value.trim() && !safeId(t.value)) { this._notice = 'Seleziona un’entità sensor valida.'; this._render(); return; }
+      if (field.endsWith('_entity')) { this._chooseEntity(field, t.value.trim()); return; }
       const value = field === 'decimals' ? count(t.value) : t.value;
       this._save({ [field]: value });
     }
