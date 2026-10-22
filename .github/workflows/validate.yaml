@@ -1,0 +1,16 @@
+name: HACS Validation
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  hacs:
+    name: HACS validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate HACS dashboard card
+        uses: hacs/action@main
+        with:
+          category: plugin
