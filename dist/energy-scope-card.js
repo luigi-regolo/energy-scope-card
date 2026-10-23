@@ -217,21 +217,21 @@
     :host([data-theme=light]) .es-comparison-pill.good{background:#e2f0e7;color:#0E6B52}
     :host([data-theme=light]) .es-comparison-pill.na{background:#e8ede9;color:#68716C}
     .es-total{font-size:38px;font-weight:780;line-height:1.16;letter-spacing:-1.2px;font-variant-numeric:tabular-nums;margin:0;overflow-wrap:anywhere}
-    .es-unit{font-size:14px;font-weight:600;color:var(--es-muted);letter-spacing:0}
+    .es-unit{font-size:14px;font-weight:650;color:var(--es-text);letter-spacing:0}
     .es-subgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px;align-items:stretch}
     .es-stat{padding:12px 13px;min-width:0;background:var(--es-panel);border:1px solid var(--es-line);border-radius:17px;display:grid;grid-template-rows:minmax(34px,auto) auto;align-content:start}
     .es-stat-label{font-size:11px;color:var(--es-muted);line-height:1.4;align-self:start;min-height:34px}
     .es-stat-val{font-size:22px;line-height:1.3;font-weight:750;font-variant-numeric:tabular-nums;margin:0;overflow-wrap:anywhere;display:flex;align-items:baseline;gap:4px;min-width:0}
-    .es-stat-unit{font-size:11px;font-weight:500;color:var(--es-muted)}
+    .es-stat-unit{font-size:12px;font-weight:650;color:var(--es-text)}
     .es-note{font-size:11px;line-height:1.5;color:var(--es-muted);margin-top:10px}
-    .es-charthead{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:20px}
+    .es-charthead{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:14px}
     .es-tabs{display:flex;gap:4px;padding:4px;border:1px solid var(--es-line);border-radius:12px;background:var(--es-panel)}
     .es-tab{font-size:12px;font-weight:650;cursor:pointer;border:0;border-radius:9px;background:transparent;color:var(--es-muted);padding:7px 12px}
     .es-tab[aria-pressed=true]{color:var(--es-text);background:var(--es-bg);box-shadow:0 0 0 1px var(--es-line)}
     :host([data-theme=dark]) .es-tabs{background:var(--es-bg)}
     :host([data-theme=dark]) .es-tab[aria-pressed=true]{background:var(--es-panel)}
-    .es-graph-region{min-height:236px}
-    .es-plot{height:156px;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:3px;align-items:stretch;margin-top:17px;border-bottom:1px solid var(--es-line);background:linear-gradient(to top,transparent 24.6%,var(--es-line) 25%,transparent 25.4%,transparent 49.6%,var(--es-line) 50%,transparent 50.4%,transparent 74.6%,var(--es-line) 75%,transparent 75.4%)}
+    .es-graph-region{min-height:210px}
+    .es-plot{height:138px;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:3px;align-items:stretch;margin-top:17px;border-bottom:1px solid var(--es-line);background:linear-gradient(to top,transparent 24.6%,var(--es-line) 25%,transparent 25.4%,transparent 49.6%,var(--es-line) 50%,transparent 50.4%,transparent 74.6%,var(--es-line) 75%,transparent 75.4%)}
     .es-barcell{height:100%;display:flex;align-items:end;justify-content:center;gap:2px;min-width:0}
     .es-bar{min-width:2px;max-width:24px;width:43%;background:var(--es-accent);border-radius:4px 4px 0 0}
     .es-bar.other{background:var(--es-other)}
@@ -259,7 +259,7 @@
     .es-popup-section{margin-top:25px}
     .es-popup-section .es-popup-label{font-size:14px;font-weight:700;margin-bottom:13px}
     button:focus-visible{outline:2px solid var(--es-accent);outline-offset:2px}
-    @container (max-width:395px){.es-shell{padding:15px;border-radius:24px}.es-title{font-size:23px}.es-total{font-size:34px}.es-stat-val{font-size:20px}.es-plot{height:138px}.es-chart-empty{min-height:173px}.es-graph-region{min-height:214px}.es-summary{padding:15px}.es-hero{gap:10px}.es-comparison-context .es-context-long{display:none}.es-comparison-context .es-context-short{display:inline}}
+    @container (max-width:395px){.es-shell{padding:15px;border-radius:24px}.es-title{font-size:23px}.es-total{font-size:34px}.es-stat-val{font-size:20px}.es-plot{height:126px}.es-chart-empty{min-height:173px}.es-graph-region{min-height:196px}.es-summary{padding:15px}.es-hero{gap:10px}.es-comparison-context .es-context-long{display:none}.es-comparison-context .es-context-short{display:inline}}
     @container (max-width:325px){.es-total{font-size:30px}.es-unit{font-size:12px}.es-comparison-pill{font-size:12px;padding:7px 9px}.es-stat{padding:10px}.es-stat-val{font-size:18px}.es-comparison-context .es-context-short{display:none}.es-comparison-context .es-context-tiny{display:inline}}
     @media(max-width:599px){.es-dialog{width:min(350px,100%);max-height:min(68vh,560px);max-height:min(68dvh,560px);border-radius:24px}.es-backdrop{padding:max(20px,env(safe-area-inset-top)) 18px max(20px,env(safe-area-inset-bottom))}}
     @media(max-height:480px){.es-dialog{max-height:calc(100dvh - 24px)}}
@@ -462,7 +462,7 @@
            ${(canMonth || canYear) ? `<div class="es-charthead"><div class="es-tabs" role="group" aria-label="Periodo del grafico">
              ${canMonth ? `<button class="es-tab" type="button" data-chart="month" aria-pressed="${this._chart === 'month'}">Mese</button>` : ''}
              ${canYear ? `<button class="es-tab" type="button" data-chart="year" aria-pressed="${this._chart === 'year'}">Anno</button>` : ''}</div></div>
-             <div class="es-graph-region">${this._chartFor(view)}</div><div class="es-note">${this._chart === 'month' ? 'Consumi giornalieri; il giorno attuale può essere parziale.' : 'Consumi mensili; il mese corrente è progressivo.'}</div>` : ''}
+             <div class="es-graph-region">${this._chartFor(view)}</div>` : ''}
            ${view.error ? `<div class="es-note" role="alert">${esc(view.error)}</div>` : ''}
            ${this._cfg.show_details ? `<button type="button" class="es-details" data-details="true" aria-haspopup="dialog" aria-expanded="${this._dialog}"><span class="es-details-label">${icon('mdi:chart-line')} Dettagli e statistiche</span>${icon('mdi:chevron-right')}</button>` : ''}`;
       }
