@@ -1,8 +1,8 @@
 # Energy Scope Card
 
-[![TikTok | Segui](assets/tiktok-segui.svg)](https://www.tiktok.com/@luigi.regolo)
+[![HACS Default](https://img.shields.io/badge/HACS-Default-41BDF5?style=flat-square)](https://my.home-assistant.io/redirect/hacs_repository/?owner=luigi-regolo&repository=energy-scope-card&category=plugin)
+[![Release](https://img.shields.io/github/v/release/luigi-regolo/energy-scope-card?label=Release&style=flat-square)](https://github.com/luigi-regolo/energy-scope-card/releases/latest)
 [![License: GPL-3.0-only](https://img.shields.io/badge/license-GPL--3.0--only-blue?style=flat-square)](LICENSE)
-[![HACS Repository](https://img.shields.io/badge/HACS-Repository-41BDF5?style=flat-square)](https://my.home-assistant.io/redirect/hacs_repository/?owner=luigi-regolo&repository=energy-scope-card&category=plugin)
 [![GitHub Stars](https://img.shields.io/github/stars/luigi-regolo/energy-scope-card?style=flat-square)](https://github.com/luigi-regolo/energy-scope-card/stargazers)
 
 ## Overview
@@ -17,7 +17,13 @@ Energy Scope Card uses Home Assistant entities and available local Recorder stat
 
 ## Preview
 
-![Energy Scope Card Preview — Graphite Dark](assets/preview-main.png)
+| Light | Dark |
+| --- | --- |
+| ![Energy Scope Card in Light mode](assets/energy-scope-card-light.png) | ![Energy Scope Card in Dark mode](assets/energy-scope-card-dark.png) |
+
+![Energy Scope Card details popup, Light mode](assets/energy-scope-card-popup-light.png)
+
+*Previews use fictional demo data. The interface text is currently in Italian.*
 
 ## Features
 
@@ -39,17 +45,37 @@ Energy sources remain separate to avoid double counting. Missing historical valu
 
 ## Installation
 
-### HACS
+### HACS (Recommended)
+
+Install Energy Scope Card directly from the default HACS catalog.
 
 [![Open Energy Scope Card in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=luigi-regolo&repository=energy-scope-card&category=plugin)
 
-1. Open HACS in Home Assistant.
-2. Open the three-dot menu and select **Custom repositories**.
-3. Enter `https://github.com/luigi-regolo/energy-scope-card`.
-4. Select **Dashboard** as the repository type and add it.
-5. Open **Energy Scope Card** in HACS and select **Download**.
-6. Reload the Home Assistant dashboard if necessary.
-7. Add **Energy Scope Card** to your dashboard and configure it through the visual editor.
+1. Open **HACS** in Home Assistant.
+2. Search for **Energy Scope Card**.
+3. Select **Energy Scope Card** from the results.
+4. Click **Download** to install the card.
+5. Reload your dashboard if necessary.
+6. Add **Energy Scope Card** to your dashboard and configure it using the visual editor.
+
+To install a specific release, use **Download** or **Redownload** and select the desired version when available.
+
+### Alternative: Custom repository
+
+If you prefer to add the repository manually:
+
+1. Open **HACS** and select **Custom repositories** from the menu.
+2. Enter `https://github.com/luigi-regolo/energy-scope-card`.
+3. Select **Dashboard** as the repository type and add it.
+4. Find **Energy Scope Card** in HACS and download it.
+
+### Manual installation
+
+1. Download `dist/energy-scope-card.js` from this repository.
+2. Copy the JavaScript file into the `www` directory of your Home Assistant configuration.
+3. Open Home Assistant's dashboard resource management.
+4. Add `/local/energy-scope-card.js` as a **JavaScript module**.
+5. Reload the dashboard and add the custom card.
 
 ## Configuration / Usage
 
@@ -97,6 +123,10 @@ Historical charts and comparisons require suitable Recorder statistics. Their av
 No specific minimum Home Assistant version has been independently verified.
 
 The card does not require the Edera theme, an external cloud service, or additional frontend libraries.
+
+## Releases
+
+See [GitHub Releases](https://github.com/luigi-regolo/energy-scope-card/releases) for published versions.
 
 ## Copyright & License
 
