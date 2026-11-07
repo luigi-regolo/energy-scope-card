@@ -34,6 +34,7 @@ Energy Scope Card uses Home Assistant entities and available local Recorder stat
 - **Yearly statistics:** Display monthly consumption throughout the year using available historical statistics.
 - **Instantaneous power:** Optionally display current power consumption in watts.
 - **Multiple energy sources:** Switch between separately configured energy sources, such as individual circuits and whole-home consumption.
+- **Optional heading:** Show or hide the top label and the card title from the visual editor.
 - **Flexible sensors:** Support compatible monthly-reset energy meters and cumulative energy counters.
 - **Detailed statistics:** Open a compact popup with additional energy information.
 - **Visual editor:** Configure energy sensors, optional power sensors, charts, labels, and appearance directly in Home Assistant.
