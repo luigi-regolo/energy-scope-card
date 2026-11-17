@@ -1,6 +1,6 @@
 # Energy Scope Card
 
-[![HACS Default](https://img.shields.io/badge/HACS-Default-41BDF5?style=flat-square)](https://my.home-assistant.io/redirect/hacs_repository/?owner=luigi-regolo&repository=energy-scope-card&category=plugin)
+[![Marketplace](https://img.shields.io/badge/Marketplace-41BDF5?style=flat-square)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=luigi-regolo&repository=energy-scope-card&category=plugin)
 [![Release](https://img.shields.io/github/v/release/luigi-regolo/energy-scope-card?label=Release&style=flat-square)](https://github.com/luigi-regolo/energy-scope-card/releases/latest)
 [![License: GPL-3.0-only](https://img.shields.io/badge/license-GPL--3.0--only-blue?style=flat-square)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/luigi-regolo/energy-scope-card?style=flat-square)](https://github.com/luigi-regolo/energy-scope-card/stargazers)
@@ -46,29 +46,19 @@ Energy sources remain separate to avoid double counting. Missing historical valu
 
 ## Installation
 
-### HACS (Recommended)
+### Marketplace (Recommended)
 
-Install Energy Scope Card directly from the default HACS catalog.
+Install Energy Scope Card directly from the default Marketplace catalog in Home Assistant 2026.11 or newer.
 
-[![Open Energy Scope Card in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=luigi-regolo&repository=energy-scope-card&category=plugin)
+[![Open Energy Scope Card in the Marketplace](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=luigi-regolo&repository=energy-scope-card&category=plugin)
 
-1. Open **HACS** in Home Assistant.
-2. Search for **Energy Scope Card**.
-3. Select **Energy Scope Card** from the results.
-4. Click **Download** to install the card.
-5. Reload your dashboard if necessary.
-6. Add **Energy Scope Card** to your dashboard and configure it using the visual editor.
-
-To install a specific release, use **Download** or **Redownload** and select the desired version when available.
-
-### Alternative: Custom repository
-
-If you prefer to add the repository manually:
-
-1. Open **HACS** and select **Custom repositories** from the menu.
-2. Enter `https://github.com/luigi-regolo/energy-scope-card`.
-3. Select **Dashboard** as the repository type and add it.
-4. Find **Energy Scope Card** in HACS and download it.
+1. Go to **Settings** > **Marketplace**.
+2. The first time, accept the notice about community content.
+3. Use **Search** to find **Energy Scope Card**.
+4. Open the repository page and select **Install**.
+5. Check the version in the dialog and select **Install** again to confirm.
+6. Reload your browser to load the new resource.
+7. Add **Energy Scope Card** to your dashboard and configure it using the visual editor.
 
 ### Manual installation
 
